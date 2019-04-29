@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>欢迎来到wjy网盘空间</title>
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+
+	</head>
+	<body>
+		<div class="container outNode">
+			<table class="table text-center table-hover">
+				<thead>
+					<tr>
+						<td>序号</td>
+						<td>上传者</td>
+						<td>文件名</td>
+						<td>文件大小</td>
+						<td>上传时间</td>
+						<td>下载次数</td>
+						<td>下载</td>
+						<td>预览</td>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- 
+					<tr>
+						<td>1</td>
+						<td>zhixing</td>
+						<td>1.jpg</td>
+						<td>1.12kb</td>
+						<td>2019/01/02</td>
+						<td>2</td>
+						<td></td>
+						<td>预览</td>
+					</tr>
+					 -->
+				</tbody>
+			</table>
+		</div>
+
+		<!-- 下载成功 -->
+		<div class="modal fade abc" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">展示栏</h4>
+					</div>
+					<div class="modal-body bodytextNode">
+					</div>
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+
+
+		<script src="js/jquery-3.3.1.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script type="text/javascript">
+			(() => {
+
+				let index = 1;
+
+				function toTr(index, userName, filesName, size, timer, download, hash,type) {
+					var oTr = document.createElement('tr');
+					// $(oTr).attr('hash',hash);
+					oTr.innerHTML =
+						`
+						<td>${index}</td>
+						<td>${userName}</td>
+						<td>${filesName}</td>
+						<td>${size}</td>
+						<td>${timer}</td>
+						<td class="dw">${download}</td>
+						<td><a role="button" class="btn btn-default btn-success btn-xs btn-download" href="./allFiles/${hash}" download="./allFiles/${hash}" hash="${hash}" user="${userName}" >下载</a></td>
+						<td><input type='button' value='预览' class='btn btn-default btn-primary btn-xs btn-show' data-toggle='modal' data-target='.abc' data-type='${type}' /></td>`;
+
+					return oTr;
+				}
+
+
+				$('body').on({
+					click(){
+						$('.modal-body')[0].innerHTML = '';
+						var re = /\.gif|\.png|\.jpg$/;
+						if(re.test($(this).attr('data-type'))){
+							var img = new Image();
+							img.className = 'img-thumbnail';
+							img.style.cssText = 'max-width:100%;max-height:100%';
+							img.onload = function(){
+								console.log(img.src);
+								$('.modal-body')[0].appendChild(img);
+							};
+							img.src = this.parentNode.parentNode.querySelector('.btn-download').href;
+						}
+					}
+				},'.btn-show');
+
+				$('body').on({
+					click() {
+						var _this = this;
+						$.ajax({
+							url: 'http://localhost:9111/show/addDownload',
+							type: 'get',
+							data: {
+								hash: $(_this).attr('hash'),
+								user: $(_this).attr('user')
+							},
+							success: function(data) {
+								if(data.ok == 1){
+									var downloadNode = _this.parentNode.parentNode.querySelector('.dw');
+									downloadNode.innerHTML = Number(downloadNode.innerHTML) + 1;
+									$('.bodytextNode p').html(data.msg);
+								}
+								else{
+									$('.bodytextNode p').html(data.msg);
+								}
+							}
+						})
+					}
+				}, '.btn-download')
+
+				$.ajax({
+					'url': 'http://localhost:9111/show/showPage',
+					'type': 'get',
+					'success': function(data) {
+						//console.log(data)
+						for (var i = 0; i < data.data.length; i++) {
+							$('.outNode tbody')[0].appendChild(toTr(index, data.data[i].user, data.data[i].LastName, (data.data[i].size /
+								1024).toFixed(2) + 'KB', data.data[i].lastTime, data.data[i].download, data.data[i].hashName,data.data[i].type));
+							index++;
+						}
+					}
+				})
+			})()
+		</script>
+	</body>
+</html>
