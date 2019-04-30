@@ -4,6 +4,7 @@ const path = require('path');
 const mysql = require('mysql');
 const Multer = require('multer');
 
+// 采用express
 const server = express();
 
 const loginRouter = express.Router();
