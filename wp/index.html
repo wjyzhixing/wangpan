@@ -7,18 +7,19 @@
 		<title>wjy网盘系统</title>
 		<link href="./css/bootstrap.min.css" rel="stylesheet">
 
-    <style type="text/css">
-    .outSide{
-		margin-top: 15px;
-		border-bottom: 1px solid #ccc;
-		margin-bottom: 10px;
-	}
-	.namesNode > span{
-		padding-bottom: 2px;
-		padding-top: 2px;
-	}
-    </style>
-	</style>
+		<style type="text/css">
+			.outSide {
+				margin-top: 15px;
+				border-bottom: 1px solid #ccc;
+				margin-bottom: 10px;
+			}
+
+			.namesNode>span {
+				padding-bottom: 2px;
+				padding-top: 2px;
+			}
+		</style>
+		</style>
 	</head>
 	<body>
 		<div class='container outSide'>
@@ -132,7 +133,7 @@
 					}
 				})
 
-				function toTr(index, filesName, size, timer, download, hash,userName) {
+				function toTr(index, filesName, size, timer, download, hash, userName) {
 					var oTr = document.createElement('tr');
 					$(oTr).attr('hash', hash);
 					oTr.innerHTML =
@@ -161,12 +162,11 @@
 								user: $(_this).attr('user')
 							},
 							success: function(data) {
-								if(data.ok == 1){
+								if (data.ok == 1) {
 									var downloadNode = _this.parentNode.parentNode.querySelector('.dw');
 									downloadNode.innerHTML = Number(downloadNode.innerHTML) + 1;
 									$('.bodytextNode p').html(data.msg);
-								}
-								else{
+								} else {
 									$('.bodytextNode p').html(data.msg);
 								}
 							}
@@ -270,23 +270,30 @@
 				// 注册
 				$('.btn-res').on({
 					click() {
-						$.ajax({
-							url: 'http://localhost:9111/login/res',
-							type: 'get',
-							data: {
-								'user': $('.userNode').val(),
-								'pass': $('.passNode').val()
-							},
-							success: function(data) {
-								if (data.ok == 1) {
-									alert(data.msg);
-									// $('.abc').modal('toggle');
-								} else {
-									alert(data.msg);
-									$('.myForm .form-group').addClass('has-error')
+						var tran_count = $('.userNode').val();
+						if (isNaN(tran_count) || tran_count.indexOf('.') != -1 || tran_count.indexOf('-') != -1 || tran_count.indexOf(
+								'0') == 0) {
+							$.ajax({
+								url: 'http://localhost:9111/login/res',
+								type: 'get',
+								data: {
+									'user': $('.userNode').val(),
+									'pass': $('.passNode').val()
+								},
+								success: function(data) {
+									if (data.ok == 1) {
+										alert(data.msg);
+										// $('.abc').modal('toggle');
+									} else {
+										alert(data.msg);
+										$('.myForm .form-group').addClass('has-error')
+									}
 								}
-							}
-						})
+							})
+						} else {
+							alert('我们不允许用数字作为用户名哦~请重新输入.');
+							return false;
+						}
 					}
 				})
 			})()
