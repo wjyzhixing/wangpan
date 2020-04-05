@@ -145,7 +145,7 @@
     "vary": "^1.1.2",
     "xtend": "^4.0.1",
     "_minimist@0.0.8@minimist": "^0.0.8",
-    "minimist": "^0.0.8"
+    "minimist": "^1.2.5"
   },
   "devDependencies": {},
   "scripts": {
